@@ -51,7 +51,9 @@ public class LoginServiceImpl implements LoginService {
             return Result.fail(ErrorCode.ACCOUNT_PWD_NOT_EXIST.getCode(), ErrorCode.ACCOUNT_PWD_NOT_EXIST.getMsg());
         }
         String token = JWTUtils.createToken(sysUser.getId());
-
+        //添加最后登陆时间
+        sysUser.setLastLogin(System.currentTimeMillis());
+        sysUserService.updateById(sysUser);
         redisTemplate.opsForValue().set("TOKEN_" + token, JSON.toJSONString(sysUser), 1, TimeUnit.DAYS);
         return Result.success(token);
     }
@@ -108,11 +110,9 @@ public class LoginServiceImpl implements LoginService {
         sysUser.setPassword(DigestUtils.md5Hex(password + slat));
         sysUser.setCreateDate(System.currentTimeMillis());
         sysUser.setLastLogin(System.currentTimeMillis());
+        //TODO 设置头像、管理员，禁用状态（如果禁用则抛出异常提示）
         sysUser.setAvatar("/static/img/user.png");
-        sysUser.setAdmin(1); //1 为true
         sysUser.setDeleted(0); // 0 为false
-        sysUser.setSalt("");
-        sysUser.setStatus("");
         sysUser.setEmail("");
         this.sysUserService.save(sysUser);
         String token = JWTUtils.createToken(sysUser.getId());

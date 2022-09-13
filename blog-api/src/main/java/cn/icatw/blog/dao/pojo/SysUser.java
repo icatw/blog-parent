@@ -14,8 +14,6 @@ public class SysUser {
 
     private String account;
 
-    private Integer admin;
-
     private String avatar;
 
     private Long createDate;
@@ -31,8 +29,4 @@ public class SysUser {
     private String nickname;
 
     private String password;
-
-    private String salt;
-
-    private String status;
 }
